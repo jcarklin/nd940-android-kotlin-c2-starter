@@ -1,13 +1,9 @@
-package com.udacity.asteroidradar.api
+package com.udacity.asteroidradar.repository.api
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import com.udacity.asteroidradar.Constants.BASE_URL
-import com.udacity.asteroidradar.model.Asteroid
-import com.udacity.asteroidradar.model.PictureOfDay
-import kotlinx.coroutines.Deferred
-import org.json.JSONObject
-import retrofit2.Call
+import com.udacity.asteroidradar.util.Constants.BASE_URL
+import com.udacity.asteroidradar.domain.PictureOfDay
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
@@ -32,11 +28,11 @@ interface NasaApiService {
 
     @GET("neo/rest/v1/feed")
     suspend fun getAsteroids(@Query("start_date") startDate: String,
-                     @Query("end_date") endDate: String,
-                     @Query("api_key") apiKey: String ) : String
+                                  @Query("end_date") endDate: String,
+                                  @Query("api_key") apiKey: String ) : String
 
     @GET("planetary/apod")
-    suspend fun getPictureOfTheDay( @Query("api_key") apiKey: String ): PictureOfDay
+    suspend fun getPictureOfTheDay(@Query("api_key") apiKey: String ): PictureOfDay
 }
 
 object NasaApi {

@@ -1,7 +1,8 @@
-package com.udacity.asteroidradar.api
+package com.udacity.asteroidradar.repository.api
 
-import com.udacity.asteroidradar.model.Asteroid
-import com.udacity.asteroidradar.Constants
+import com.udacity.asteroidradar.domain.Asteroid
+import com.udacity.asteroidradar.repository.database.AsteroidEntity
+import com.udacity.asteroidradar.util.Constants
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
@@ -54,4 +55,11 @@ private fun getNextSevenDaysFormattedDates(): ArrayList<String> {
     }
 
     return formattedDateList
+}
+
+fun List<Asteroid>.asDatabaseModel() : List<AsteroidEntity> {
+    return map {
+        AsteroidEntity(it.id, it.codename, it.closeApproachDate, it.absoluteMagnitude,
+                it.estimatedDiameter, it.relativeVelocity, it.distanceFromEarth, it.isPotentiallyHazardous)
+    }
 }
