@@ -1,7 +1,10 @@
 package com.udacity.asteroidradar.repository.api
 
 import com.udacity.asteroidradar.domain.Asteroid
+import com.udacity.asteroidradar.domain.PictureOfDay
 import com.udacity.asteroidradar.repository.database.AsteroidEntity
+import com.udacity.asteroidradar.repository.database.Converters
+import com.udacity.asteroidradar.repository.database.PictureOfDayEntity
 import com.udacity.asteroidradar.util.Constants
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -24,7 +27,6 @@ fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<Asteroid> {
             val absoluteMagnitude = asteroidJson.getDouble("absolute_magnitude_h")
             val estimatedDiameter = asteroidJson.getJSONObject("estimated_diameter")
                 .getJSONObject("kilometers").getDouble("estimated_diameter_max")
-
             val closeApproachData = asteroidJson
                 .getJSONArray("close_approach_data").getJSONObject(0)
             val relativeVelocity = closeApproachData.getJSONObject("relative_velocity")
@@ -35,7 +37,7 @@ fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<Asteroid> {
                 .getBoolean("is_potentially_hazardous_asteroid")
 
             val asteroid = Asteroid(id, codename, formattedDate, absoluteMagnitude,
-                estimatedDiameter, relativeVelocity, distanceFromEarth, isPotentiallyHazardous)
+                estimatedDiameter, relativeVelocity, distanceFromEarth, isPotentiallyHazardous, false)
             asteroidList.add(asteroid)
         }
     }
@@ -58,8 +60,14 @@ private fun getNextSevenDaysFormattedDates(): ArrayList<String> {
 }
 
 fun List<Asteroid>.asDatabaseModel() : List<AsteroidEntity> {
+    val converters = Converters()
     return map {
-        AsteroidEntity(it.id, it.codename, it.closeApproachDate, it.absoluteMagnitude,
-                it.estimatedDiameter, it.relativeVelocity, it.distanceFromEarth, it.isPotentiallyHazardous)
+        AsteroidEntity(it.id, it.codename, converters.fromString(it.closeApproachDate), it.absoluteMagnitude,
+                it.estimatedDiameter, it.relativeVelocity, it.distanceFromEarth,
+            it.isPotentiallyHazardous, it.isSaved)
     }
+}
+
+fun PictureOfDay.asDatabaseModel() : PictureOfDayEntity {
+    return PictureOfDayEntity(1,mediaType, title, url)
 }

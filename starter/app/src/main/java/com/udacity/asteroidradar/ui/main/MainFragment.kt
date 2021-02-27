@@ -2,11 +2,13 @@ package com.udacity.asteroidradar.ui.main
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
+import com.udacity.asteroidradar.repository.AsteroidRepository
 
 class MainFragment : Fragment() {
 
@@ -38,6 +40,13 @@ class MainFragment : Fragment() {
             }
         })
 
+        viewModel.status.observe(viewLifecycleOwner, {
+            it?. let {
+                if (it == Status.ERROR) {
+                    Toast.makeText(context, R.string.network_error, Toast.LENGTH_LONG).show()
+                }
+            }
+        })
         setHasOptionsMenu(true)
 
         return binding.root
@@ -49,6 +58,13 @@ class MainFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        viewModel.updateFilter(
+            when (item.itemId) {
+                R.id.show_week_menu -> AsteroidRepository.NasaApiFilter.SHOW_THIS_WEEK
+                R.id.show_today_menu -> AsteroidRepository.NasaApiFilter.SHOW_TODAY
+                else -> AsteroidRepository.NasaApiFilter.SHOW_SAVED
+            }
+        )
         return true
     }
 }

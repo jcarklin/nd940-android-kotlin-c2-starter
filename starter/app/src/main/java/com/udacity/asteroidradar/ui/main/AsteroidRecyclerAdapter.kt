@@ -7,10 +7,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.udacity.asteroidradar.R
+import com.udacity.asteroidradar.databinding.AsteroidItemViewBinding
 import com.udacity.asteroidradar.domain.Asteroid
 
-class AsteroidRecyclerViewAdapter(val clickListener: ClickListener) :
-    ListAdapter<Asteroid, TextItemViewHolder>(DiffCallback) {
+class AsteroidRecyclerViewAdapter(private val clickListener: ClickListener) :
+    ListAdapter<Asteroid, AsteroidViewHolder>(DiffCallback) {
 
     companion object DiffCallback  : DiffUtil.ItemCallback<Asteroid>() {
         override fun areItemsTheSame(oldItem: Asteroid, newItem: Asteroid): Boolean {
@@ -30,21 +31,18 @@ class AsteroidRecyclerViewAdapter(val clickListener: ClickListener) :
 
     override fun getItemCount() = data.size
 
-    override fun onBindViewHolder(holder: TextItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: AsteroidViewHolder, position: Int) {
         val item = data[position]
-        holder.textView.text = item.codename
-        holder.textView.setOnClickListener {
+        holder.binding.asteroid = item
+        holder.binding.asteroidLayout.setOnClickListener {
             clickListener.onClick(item)
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TextItemViewHolder {
-
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AsteroidViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val view = layoutInflater
-            .inflate(R.layout.text_item_view, parent, false) as TextView
-
-        return TextItemViewHolder(view)
+        val binding = AsteroidItemViewBinding.inflate(layoutInflater, parent, false)
+        return AsteroidViewHolder(binding)
     }
 
     class ClickListener(val clickListener: (asteroid: Asteroid)->Unit) {
@@ -52,4 +50,5 @@ class AsteroidRecyclerViewAdapter(val clickListener: ClickListener) :
     }
 }
 
-class TextItemViewHolder(internal val textView: TextView): RecyclerView.ViewHolder(textView)
+class AsteroidViewHolder (internal val binding: AsteroidItemViewBinding)
+    : RecyclerView.ViewHolder(binding.root)

@@ -5,8 +5,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
+import com.squareup.picasso.Picasso
 import com.udacity.asteroidradar.ui.main.Status
 
 @BindingAdapter("statusIcon")
@@ -48,20 +47,12 @@ fun bindTextViewToDisplayVelocity(textView: TextView, number: Double) {
 @BindingAdapter("imageUrl")
 fun bindImage(imgView: ImageView, imgSrc: String?) {
     imgSrc?.let {
-        Glide.with(imgView.context)
+        Picasso.get()
             .load(imgSrc)
-            .apply(
-                RequestOptions()
-                .placeholder(R.drawable.loading_animation)
-                .error(R.drawable.placeholder_picture_of_day))
-            .into(imgView)
+            .placeholder(R.drawable.loading_animation)
+            .error(R.drawable.placeholder_picture_of_day)
+            .into(imgView);
     }
-}
-
-@BindingAdapter("apiStatus")
-fun bindApiStatus(textView: TextView, status: Status?) {
-        if (status == Status.ERROR)
-            textView.text = textView.context.getText(R.string.network_error)
 }
 
 @BindingAdapter("apiStatus")

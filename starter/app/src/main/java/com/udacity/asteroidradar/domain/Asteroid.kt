@@ -15,4 +15,5 @@ data class Asteroid(
     val estimatedDiameter: Double,
     val relativeVelocity: Double,
     val distanceFromEarth: Double,
-    val isPotentiallyHazardous: Boolean) : Parcelable
+    val isPotentiallyHazardous: Boolean,
+    val isSaved: Boolean) : Parcelable
