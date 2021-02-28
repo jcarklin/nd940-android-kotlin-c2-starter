@@ -14,9 +14,9 @@ class RefreshDataWorker(appContext: Context, parameters: WorkerParameters) :
     }
 
     override suspend fun doWork(): Result {
-        // TODO: clear previous records
         val repository = AsteroidRepository(AsteroidDatabase.getInstance(applicationContext))
         return try {
+            repository.clearPreviousAsteroids()
             repository.refresh()
             Result.success()
         } catch (e: Exception){

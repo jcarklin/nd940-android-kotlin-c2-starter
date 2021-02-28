@@ -31,7 +31,7 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
         val start = calendar.time
         if (filter==NasaApiFilter.SHOW_THIS_WEEK) {
             //saturday is last day of week
-            var dayOfWeek = Calendar.SATURDAY-calendar.get(Calendar.DAY_OF_WEEK);
+            val dayOfWeek = Calendar.SATURDAY-calendar.get(Calendar.DAY_OF_WEEK)
             calendar.add(Calendar.DAY_OF_YEAR, dayOfWeek)
         } else if (filter!=NasaApiFilter.SHOW_TODAY) {
             calendar.add(Calendar.DAY_OF_YEAR, Constants.DEFAULT_END_DATE_DAYS)
@@ -47,17 +47,22 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
 
     suspend fun refresh() {
         withContext(Dispatchers.IO) {
-            val asteroidList = parseAsteroidsJsonResult(JSONObject(getAsteroids()))
+            val asteroidsString = getAsteroids()
+            val asteroidsJson = JSONObject(asteroidsString)
+            val asteroidList = parseAsteroidsJsonResult(asteroidsJson)
             database.asteroidDao.insertAsteroids(asteroidList.asDatabaseModel())
             val pictureOfDay = getPictureOfDay()
             database.asteroidDao.insertPictureOfDay(pictureOfDay.asDatabaseModel())
         }
     }
 
-    suspend fun filterBy(filter: NasaApiFilter) {
-        if(asteroids.value.isNullOrEmpty()) {
-            refresh()
+    suspend fun clearPreviousAsteroids() {
+        withContext((Dispatchers.IO)) {
+            database.asteroidDao.clearPreviousAsteroids(Date())
         }
+    }
+
+    fun filterBy(filter: NasaApiFilter) {
         _filterBy.value = filter
     }
 
@@ -72,8 +77,7 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
     }
 
     private suspend fun getPictureOfDay(): PictureOfDay {
-        var pictureOfDay = NasaApi.retrofitServiceMoshi.getPictureOfTheDay(BuildConfig.NASA_KEY)
-        return pictureOfDay
+        return NasaApi.retrofitServiceMoshi.getPictureOfTheDay(BuildConfig.NASA_KEY)
     }
 
 }

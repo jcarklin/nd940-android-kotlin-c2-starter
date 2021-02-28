@@ -1,4 +1,4 @@
-package com.udacity.asteroidradar
+package com.udacity.asteroidradar.util
 
 import android.view.View
 import android.widget.ImageView
@@ -6,6 +6,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.squareup.picasso.Picasso
+import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.ui.main.Status
 
 @BindingAdapter("statusIcon")
@@ -51,7 +52,7 @@ fun bindImage(imgView: ImageView, imgSrc: String?) {
             .load(imgSrc)
             .placeholder(R.drawable.loading_animation)
             .error(R.drawable.placeholder_picture_of_day)
-            .into(imgView);
+            .into(imgView)
     }
 }
 
@@ -61,5 +62,16 @@ fun bindApiStatus(progressBar: ProgressBar, status: Status?) {
         Status.LOADING -> progressBar.visibility = View.VISIBLE
         Status.ERROR -> progressBar.visibility = View.GONE
         Status.DONE -> progressBar.visibility = View.GONE
+    }
+}
+
+@BindingAdapter("asteroidStatusContentDescription")
+fun bindAsteroidStatusContentDescription(imageView: ImageView, isHazardous: Boolean) {
+    if (isHazardous) {
+        imageView.contentDescription = imageView.context
+            .getText(R.string.potentially_hazardous_asteroid_image)
+    } else {
+        imageView.contentDescription = imageView.context
+            .getText(R.string.not_hazardous_asteroid_image)
     }
 }

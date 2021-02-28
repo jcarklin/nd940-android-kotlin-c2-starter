@@ -5,7 +5,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.udacity.asteroidradar.domain.Asteroid
 import java.util.*
 
 @Dao
@@ -17,8 +16,8 @@ interface AsteroidDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPictureOfDay(pod: PictureOfDayEntity)
 
-    @Query("DELETE FROM asteroid_table")
-    suspend fun clearAsteroids()
+    @Query("DELETE FROM asteroid_table WHERE approach_date < :today")
+    suspend fun clearPreviousAsteroids(today: Date)
 
     @Query("DELETE FROM picture_of_day")
     suspend fun clearPoD()

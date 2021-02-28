@@ -26,11 +26,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 _status.value = Status.LOADING
                 repository.refresh()
-                _status.value = Status.DONE
             } catch (e: Exception) {
                 _status.value = Status.ERROR
             }
             repository.filterBy(NasaApiFilter.SHOW_SAVED)
+            _status.value = Status.DONE
         }
     }
 

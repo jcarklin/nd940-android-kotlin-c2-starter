@@ -2,11 +2,9 @@ package com.udacity.asteroidradar.ui.main
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.AsteroidItemViewBinding
 import com.udacity.asteroidradar.domain.Asteroid
 
@@ -32,17 +30,11 @@ class AsteroidRecyclerViewAdapter(private val clickListener: ClickListener) :
     override fun getItemCount() = data.size
 
     override fun onBindViewHolder(holder: AsteroidViewHolder, position: Int) {
-        val item = data[position]
-        holder.binding.asteroid = item
-        holder.binding.asteroidLayout.setOnClickListener {
-            clickListener.onClick(item)
-        }
+        holder.bind(clickListener, data[position])
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AsteroidViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = AsteroidItemViewBinding.inflate(layoutInflater, parent, false)
-        return AsteroidViewHolder(binding)
+        return AsteroidViewHolder.from(parent)
     }
 
     class ClickListener(val clickListener: (asteroid: Asteroid)->Unit) {
@@ -50,5 +42,22 @@ class AsteroidRecyclerViewAdapter(private val clickListener: ClickListener) :
     }
 }
 
-class AsteroidViewHolder (internal val binding: AsteroidItemViewBinding)
-    : RecyclerView.ViewHolder(binding.root)
+class AsteroidViewHolder private constructor(private val binding: AsteroidItemViewBinding)
+    : RecyclerView.ViewHolder(binding.root) {
+
+    fun bind(clickListener: AsteroidRecyclerViewAdapter.ClickListener, item: Asteroid) {
+        binding.asteroid = item
+        binding.asteroidLayout.setOnClickListener {
+            clickListener.onClick(item)
+        }
+        binding.executePendingBindings()
+    }
+
+    companion object {
+        fun from(parent: ViewGroup): AsteroidViewHolder {
+            val layoutInflater = LayoutInflater.from(parent.context)
+            val binding = AsteroidItemViewBinding.inflate(layoutInflater, parent, false)
+            return AsteroidViewHolder(binding)
+        }
+    }
+}
